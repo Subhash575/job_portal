@@ -80,11 +80,13 @@ export const getAppliedJobs = async (req, res) => {
 export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
-    const job = await Job.findById(jobId).populate({
+    // Only the recruiter who posted the job may see its applicants.
+    const job = await Job.findOne({ _id: jobId, created_by: req.id }).populate({
       path: "applications",
       options: { sort: { createdAt: -1 } },
       populate: {
         path: "applicant", //Here we done the nested populate.
+        select: "-password", // never send password hashes
       },
     });
     if (!job) {
@@ -116,6 +118,14 @@ export const updateStatus = async (req, res) => {
     // find the application by applicantion id
     const application = await Application.findOne({ _id: applicationId });
     if (!application) {
+      return res.status(404).json({
+        message: "Application not found.",
+        success: false,
+      });
+    }
+
+    // Only the recruiter who posted the job may change an application's status.
+    if (!(await Job.exists({ _id: application.job, created_by: req.id }))) {
       return res.status(404).json({
         message: "Application not found.",
         success: false,

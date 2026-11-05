@@ -83,6 +83,14 @@ export const updateCompany = async (req, res) => {
     //updating data get from the req body.
     const { name, description, website, location } = req.body;
 
+    // Only the company's owner may edit it. Checked before the upload so strangers can't fill our Cloudinary storage.
+    if (!(await Company.exists({ _id: req.params.id, userId: req.id }))) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
     const file = req.file;
     // idhar cloudinary ayega
 
