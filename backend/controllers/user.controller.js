@@ -99,6 +99,7 @@ export const login = async (req, res) => {
 
     const tokenData = {
       userId: user._id,
+      role: user.role,
     };
     //check
     //understanding about jwt token

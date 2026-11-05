@@ -1,4 +1,5 @@
 import { Job } from "../models/job.model.js";
+import { Company } from "../models/company.model.js";
 
 // admin post krega job
 export const postJob = async (req, res) => {
@@ -30,6 +31,13 @@ export const postJob = async (req, res) => {
     ) {
       return res.status(400).json({
         message: "Somethin is missing.",
+        success: false,
+      });
+    }
+    // The company must belong to the recruiter who is posting.
+    if (!(await Company.exists({ _id: companyId, userId }))) {
+      return res.status(404).json({
+        message: "Company not found.",
         success: false,
       });
     }

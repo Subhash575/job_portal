@@ -17,6 +17,7 @@ const isAuthenticated = async (req, res, next) => {
       });
     }
     req.id = decode.userId;
+    req.role = decode.role;
     next();
   } catch (error) {
     console.log(error);
@@ -26,4 +27,13 @@ const isAuthenticated = async (req, res, next) => {
     });
   }
 };
+// Use after isAuthenticated. Tokens issued before this change have no role, so those users must log in again.
+export const isRecruiter = (req, res, next) =>
+  req.role === "recruiter"
+    ? next()
+    : res.status(403).json({
+        message: "Only recruiters can do this.",
+        success: false,
+      });
+
 export default isAuthenticated;
