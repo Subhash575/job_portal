@@ -79,9 +79,26 @@ app.use("/api/v1/application", applicationRoute);
 //   console.log(`Server running at port ${PORT}`);
 // });
 
-// connect DB first, then start server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running at port ${PORT}`);
+// Express 5 sends errors thrown in async handlers here, so every route gets a reply.
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (err.name === "CastError") {
+    return res.status(400).json({ message: "Invalid id.", success: false });
+  }
+  res.status(500).json({
+    message: "Internal server error. Please try again.",
+    success: false,
   });
 });
+
+// connect DB first, then start server. If the database is down, stop instead of serving errors.
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running at port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Could not connect to MongoDB:", error.message);
+    process.exit(1);
+  });
