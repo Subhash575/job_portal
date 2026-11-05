@@ -10,35 +10,36 @@ export const applyJob = async (req, res) => {
       success: false,
     });
   }
-  // check if the user has already applied for the job
-  const existingApplication = await Application.findOne({
-    job: jobId,
-    applicant: userId,
-  });
-
-  if (existingApplication) {
-    return res.status(400).json({
-      message: "You have already applied for this jobs",
-      success: false,
-    });
-  }
-
   // check if the jobs exists
-  const job = await Job.findById(jobId);
-  if (!job) {
+  if (!(await Job.exists({ _id: jobId }))) {
     return res.status(404).json({
       message: "Job not found",
       success: false,
     });
   }
-  // create a new application
-  const newApplication = await Application.create({
-    job: jobId,
-    applicant: userId,
-  });
+  // create a new application. The unique index on (job, applicant) refuses a second one,
+  // even when two requests arrive at the same moment.
+  let newApplication;
+  try {
+    newApplication = await Application.create({
+      job: jobId,
+      applicant: userId,
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "You have already applied for this jobs",
+        success: false,
+      });
+    }
+    throw error;
+  }
 
-  job.applications.push(newApplication._id);
-  await job.save();
+  // $push changes only this list, so two applicants can't overwrite each other's entry
+  await Job.updateOne(
+    { _id: jobId },
+    { $push: { applications: newApplication._id } },
+  );
   return res.status(201).json({
     message: "Job applied successfully.",
     success: true,
@@ -101,6 +102,12 @@ export const updateStatus = async (req, res) => {
       success: false,
     });
   }
+  if (!["pending", "accepted", "rejected"].includes(String(status).toLowerCase())) {
+    return res.status(400).json({
+      message: "status must be pending, accepted or rejected",
+      success: false,
+    });
+  }
 
   // find the application by applicantion id
   const application = await Application.findOne({ _id: applicationId });
@@ -120,7 +127,7 @@ export const updateStatus = async (req, res) => {
   }
 
   // update the status
-  application.status = status.toLowerCase();
+  application.status = String(status).toLowerCase();
   await application.save();
 
   return res.status(200).json({
