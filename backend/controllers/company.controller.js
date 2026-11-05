@@ -78,15 +78,16 @@ export const updateCompany = async (req, res) => {
     });
   }
 
+  const updateData = { name, description, website, location };
+
+  // the logo is optional: without a file, keep the current one
   const file = req.file;
-  // idhar cloudinary ayega
+  if (file) {
+    const fileUri = getDataUri(file);
+    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+    updateData.logo = cloudResponse.secure_url;
+  }
 
-  const fileUri = getDataUri(file);
-  const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-  const logo = cloudResponse.secure_url;
-
-  const updateData = { name, description, website, location, logo };
- 
 
   //Here we find the company by id and then updateData
   const company = await Company.findByIdAndUpdate(req.params.id, updateData, {
