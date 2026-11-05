@@ -36,4 +36,27 @@ export const isRecruiter = (req, res, next) =>
         success: false,
       });
 
+// Allows at most `max` requests per IP in each `windowMs`, then answers 429. Use it on login/register so passwords can't be guessed all day.
+// shortcut: the counts live in this server's memory, so they reset on restart and are not shared between servers; use a shared store (e.g. Redis) if you run more than one instance.
+export const limitAttempts = (max = 10, windowMs = 15 * 60 * 1000) => {
+  const hits = new Map();
+  setInterval(() => {
+    const now = Date.now();
+    for (const [ip, h] of hits) if (h.reset <= now) hits.delete(ip);
+  }, windowMs).unref();
+  return (req, res, next) => {
+    const now = Date.now();
+    let h = hits.get(req.ip);
+    if (!h || h.reset <= now) hits.set(req.ip, (h = { count: 0, reset: now + windowMs }));
+    if (++h.count > max) {
+      res.set("Retry-After", String(Math.ceil((h.reset - now) / 1000)));
+      return res.status(429).json({
+        message: "Too many attempts. Please try again later.",
+        success: false,
+      });
+    }
+    next();
+  };
+};
+
 export default isAuthenticated;

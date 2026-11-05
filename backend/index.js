@@ -26,6 +26,8 @@ const app = express();
 
 //middleware
 //When request pass then our data in jason format.
+// Render puts one proxy in front of the app. Without this every visitor shares the proxy's IP and the login limit would lock everyone out together.
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
