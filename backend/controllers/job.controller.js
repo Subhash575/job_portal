@@ -62,7 +62,8 @@ export const postJob = async (req, res) => {
 export const getAllJobs = async (req, res) => {
   // in url we pass the keyword as:
   // http://localhost/company/?keyword="frontend developer"
-  const keyword = req.query.keyword || "";
+  // The keyword is plain text, not a pattern: escape it so a crafted search can't make MongoDB work for ages.
+  const keyword = String(req.query.keyword || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const query = {
     $or: [
       { title: { $regex: keyword, $options: "i" } },
@@ -73,7 +74,8 @@ export const getAllJobs = async (req, res) => {
     .populate({
       path: "company",
     })
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .limit(100); // shortcut: the frontend has no paging yet, so older jobs drop off; add paging when there are more than 100 jobs
   if (!jobs) {
     return res.status(404).json({
       message: "Jobs not found.",
