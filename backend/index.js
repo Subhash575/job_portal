@@ -44,18 +44,8 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl), allowed explicit origins, OR any Vercel domain ending in .vercel.app
-      if (
-        !origin || 
-        allowedOrigins.includes(origin) || 
-        origin.endsWith(".vercel.app")
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error(`CORS blocked: ${origin} not allowed`));
-      }
-    },
+    // Only our own sites may call the API from a browser. Any other origin gets no CORS headers and the browser blocks it.
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
