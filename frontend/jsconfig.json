@@ -1,0 +1,23 @@
+{
+  // "files": [],
+  // "references": [],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      // "@/*": ["./src/*"]
+      "@/*": ["src/*"]
+    }
+  }
+}
+
+// {
+//   "compilerOptions": {
+//     "target": "ES6",
+//     "baseUrl": ".",
+//     "paths": {
+//       "@/*": ["src/*"]
+//     },
+//     "jsx": "react-jsx"
+//   },
+//   "include": ["src"]
+// }

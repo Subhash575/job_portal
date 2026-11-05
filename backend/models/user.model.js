@@ -1,0 +1,43 @@
+import mongoose from "mongoose";
+
+const userSchema = new mongoose.Schema(
+  {
+    fullname: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      //bcs not create user with same email
+    },
+    phoneNumber: {
+      type: Number,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["student", "recruiter"],
+      required: true,
+    },
+    profile: {
+      bio: { type: String },
+      skills: [{ type: String }],
+      resume: { type: String }, // URL to resume file
+      resumeOriginalName: { type: String }, //resume name with extension ex: .pdf
+      //In below we generate relation between "company table and user table"
+      company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
+      profilePhoto: {
+        type: String,
+        default: "",
+      },
+    },
+  },
+  { timestamps: true }
+);
+export const User = mongoose.model("User", userSchema);
