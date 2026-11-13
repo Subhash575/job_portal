@@ -3,6 +3,7 @@ import Navbar from './shared/Navbar';
 import Footer from './shared/Footer';
 import PageHeader from './shared/PageHeader';
 import FilterCard from './FilterCard';
+import { SALARY_RANGES } from '@/lib/utils';
 import LatestJobCards from './LatestJobCards';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
@@ -17,7 +18,11 @@ const Jobs = () => {
   const [filterJobs, setFilterJobs] = useState(allJobs);
 
   useEffect(() => {
-    if (searchedQuery) {
+    const range = SALARY_RANGES[searchedQuery];
+    if (range) {
+      const [above, upTo] = range;
+      setFilterJobs(allJobs.filter(job => job.salary > above && job.salary <= upTo));
+    } else if (searchedQuery) {
       const filteredJobs = allJobs.filter(job => {
         return (
           job.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||

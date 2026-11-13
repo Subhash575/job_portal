@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
+import { SALARY_RANGES } from '@/lib/utils';
 
 const fitlerData = [
   {
@@ -43,7 +44,7 @@ const fitlerData = [
   },
   {
     fitlerType: 'Salary',
-    array: ['0LPA-25LPA', '26LPA-95LPA', '96LPA and More '],
+    array: Object.keys(SALARY_RANGES),
   },
 ];
 
