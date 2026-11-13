@@ -20,10 +20,6 @@ const HeroSection = () => {
   return (
     <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-10 flex flex-wrap items-center gap-10">
       <div className="flex-[1_1_420px] min-w-0 flex flex-col gap-5">
-        <span className="self-start inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#dcfce7] text-[#166534] font-mono text-xs">
-          <span className="w-2 h-2 rounded-full bg-[#16a34a]" />
-          open roles across India
-        </span>
         <h1 className="text-5xl sm:text-6xl leading-[1.05] font-light tracking-[-0.035em] text-ink">
           There’s a <span className="font-bold text-brand">seat</span>
           <br />
