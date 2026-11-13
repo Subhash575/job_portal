@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PageHeader from '../shared/PageHeader';
 import Navbar from '../shared/Navbar';
 import ApplicantsTable from './ApplicantsTable';
 import axios from 'axios';
@@ -29,12 +30,16 @@ const Applicants = () => {
   return (
     <div>
       <Navbar />
-      <div className="max-w-7xl mx-auto">
-        <h1 className="font-bold text-xl my-5">
-          Applicants {applicants?.applications?.length}
-        </h1>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-16">
+        <PageHeader eyebrow="Applicants" className="mb-2">
+          People who want <b>this seat</b>
+        </PageHeader>
+        <p className="mb-6 font-mono text-xs text-ink-muted">
+          {applicants?.applications?.length || 0} applied
+          {applicants?.title && ` for ${applicants.title}`}
+        </p>
         <ApplicantsTable />
-      </div>
+      </main>
     </div>
   );
 };

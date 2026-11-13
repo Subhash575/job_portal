@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import PageHeader from '../shared/PageHeader';
+import { Plus } from 'lucide-react';
 import Navbar from '../shared/Navbar';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -20,19 +22,26 @@ const Companies = () => {
   return (
     <div>
       <Navbar />
-      <div className="max-w-6xl mx-auto my-10">
-        <div className="flex items-center justify-between my-5">
-          <Input
-            className="w-fit"
-            placeholder="Filter by name"
-            onChange={e => setInput(e.target.value)}
-          />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-16">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+          <PageHeader eyebrow="Recruiter">
+            Your <b>companies</b>
+          </PageHeader>
           <Button onClick={() => navigate('/admin/companies/create')}>
-            New Company
+            <Plus /> New company
           </Button>
         </div>
+        <label htmlFor="company-filter" className="sr-only">
+          Filter companies by name
+        </label>
+        <Input
+          id="company-filter"
+          className="mb-4 sm:max-w-xs"
+          placeholder="Filter by name"
+          onChange={e => setInput(e.target.value)}
+        />
         <CompaniesTable />
-      </div>
+      </main>
     </div>
   );
 };
