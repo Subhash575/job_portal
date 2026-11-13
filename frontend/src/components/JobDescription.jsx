@@ -107,19 +107,14 @@ const JobDescription = () => {
           <div className="flex flex-col items-start gap-4 p-8 rounded-2xl border border-line">
             <ChairIcon open className="w-10 h-11" />
             <h1 className="text-2xl font-extrabold tracking-tight text-ink">
-              Log in to see this job
+              This seat isn’t here
             </h1>
             <p className="text-ink-muted">
-              Job details are for members. It only takes a minute to join.
+              The job may have been filled or taken down.
             </p>
-            <div className="flex gap-3">
-              <Link to="/login" className="keycap-brand px-5 py-2.5 rounded-xl font-bold">
-                Log in
-              </Link>
-              <Link to="/signup" className="keycap px-5 py-2.5 rounded-xl font-bold text-ink">
-                Sign up
-              </Link>
-            </div>
+            <Link to="/jobs" className="keycap-brand px-5 py-2.5 rounded-xl font-bold">
+              See all jobs
+            </Link>
           </div>
         ) : (
           <>

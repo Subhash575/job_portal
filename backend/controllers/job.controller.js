@@ -90,8 +90,10 @@ export const getAllJobs = async (req, res) => {
 // student:-  Here we get jobById
 export const getJobById = async (req, res) => {
   const jobId = req.params.id;
+  // Public route: only who applied (for the count and "already applied"), never statuses.
   const job = await Job.findById(jobId).populate({
     path: "applications",
+    select: "applicant",
   });
 
   if (!job) {
