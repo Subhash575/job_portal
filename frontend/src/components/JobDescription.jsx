@@ -26,7 +26,7 @@ const JobDescription = () => {
   const jobId = params.id;
   const dispatch = useDispatch();
 
-  // Details need a login; logged-out visitors (and a failed fetch) fall back to the public job list.
+  // Show the job from the list straight away; the fetch below fills in details (and covers direct links).
   const job =
     singleJob?._id === jobId
       ? singleJob
@@ -61,7 +61,6 @@ const JobDescription = () => {
   };
 
   useEffect(() => {
-    if (!user) return; // the details route needs a login
     const fetchSingleJob = async () => {
       try {
         const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../shared/Navbar';
+import AuthLayout from './AuthLayout';
+import RolePicker from './RolePicker';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
-import { RadioGroup } from '../ui/radio-group';
 import { Button } from '../ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { USER_API_END_POINT } from '@/utils/constant';
@@ -82,109 +82,86 @@ const Signup = () => {
   }, [navigate, user]);
 
   return (
-    <div>
-      <Navbar />
-      <div className="flex items-center justify-center max-w-7xl mx-auto">
-        <form
-          onSubmit={submitHandler}
-          className="w-1/2 border border-gray-200 rounded-md p-4 my-10"
-        >
-          <h1 className="font-bold text-xl mb-5">Sign Up</h1>
-          <div className="my-2">
-            <Label>Full Name</Label>
+    <AuthLayout eyebrow="Join JobPortal" title={<>Pull up a <b>chair</b></>}>
+      <form onSubmit={submitHandler} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="signup-name">Full name</Label>
             <Input
+              id="signup-name"
               type="text"
               value={input.fullname}
               name="fullname"
               onChange={changeEventHandler}
-              placeholder="Enter Full Name"
+              placeholder="Asha Rao"
+              autoComplete="name"
             />
           </div>
-          <div className="my-2">
-            <Label>Email</Label>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="signup-email">Email</Label>
             <Input
+              id="signup-email"
               type="email"
               value={input.email}
               name="email"
               onChange={changeEventHandler}
-              placeholder="Enter the Email"
+              placeholder="you@example.com"
+              autoComplete="email"
             />
           </div>
-          <div className="my-2">
-            <Label>Phone Number</Label>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="signup-phone">Phone number</Label>
             <Input
-              type="text"
+              id="signup-phone"
+              type="tel"
               value={input.phoneNumber}
               name="phoneNumber"
               onChange={changeEventHandler}
-              placeholder="Enter the phone number"
+              placeholder="98765 43210"
+              autoComplete="tel"
             />
           </div>
-          <div className="my-2">
-            <Label>Password</Label>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="signup-password">Password</Label>
             <Input
+              id="signup-password"
               type="password"
               value={input.password}
               name="password"
               onChange={changeEventHandler}
-              placeholder="Enter the Password"
+              placeholder="Choose a password"
+              autoComplete="new-password"
             />
           </div>
-          {/* Here we use the radio button so that recruiter or student select */}
-          <div className="flex items-center justify-between">
-            <RadioGroup className="flex items-center gap-4 my-5">
-              <div className="flex items-center space-x-2">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="student"
-                  checked={input.role === 'student'}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                <Label htmlFor="r1">JobSeeker</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="recruiter"
-                  checked={input.role === 'recruiter'}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                <Label htmlFor="r2">Recruiter</Label>
-              </div>
-            </RadioGroup>
-            <div className="flex items-center gap-2">
-              <Label>Profile</Label>
-              <Input
-                accept="image/*"
-                type="file"
-                onChange={changeFileHandler}
-                className="cursor-pointer"
-              />
-            </div>
+          <RolePicker value={input.role} onChange={changeEventHandler} />
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="signup-photo">
+              Profile photo <span className="font-normal text-ink-muted">(optional)</span>
+            </Label>
+            <Input
+              id="signup-photo"
+              accept="image/*"
+              type="file"
+              onChange={changeFileHandler}
+              className="cursor-pointer pt-2.5"
+            />
           </div>
           {loading ? (
-            <Button className="w-full my-4">
-              {' '}
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait{' '}
+            <Button size="lg" className="w-full" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
             </Button>
           ) : (
-            <Button type="submit" className="w-full my-4">
-              Signup
+            <Button type="submit" size="lg" className="w-full">
+              Create account
             </Button>
           )}
-          <span className="text-sm">
-            Don't have an account?
-            <Link to="/login" className="text-blue-600">
-              Login
+          <p className="text-sm text-ink-muted">
+            Already have an account?{' '}
+            <Link to="/login" className="font-bold text-brand hover:underline">
+              Log in
             </Link>
-          </span>
-        </form>
-      </div>
-    </div>
+          </p>
+      </form>
+    </AuthLayout>
   );
 };
 
