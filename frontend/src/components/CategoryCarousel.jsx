@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { setSearchedQuery } from '@/redux/jobSlice';
 
 const category = [
-  'FullStack Developer',
-  'Frontend Developer',
-  'Finance & Banking',
-  'Telecommunications',
-  'Consulting',
+  { name: 'FullStack Developer', dot: '#f97316' },
+  { name: 'Frontend Developer', dot: '#10b981' },
+  { name: 'Finance & Banking', dot: '#3b82f6' },
+  { name: 'Telecommunications', dot: '#eab308' },
+  { name: 'Consulting', dot: '#ec4899' },
 ];
 
 const CategoryCarousel = () => {
@@ -33,12 +33,17 @@ const CategoryCarousel = () => {
       <div className="flex flex-wrap gap-3">
         {category.map(cat => (
           <button
-            key={cat}
+            key={cat.name}
             type="button"
-            onClick={() => searchJobHandler(cat)}
-            className="keycap min-h-12 px-4 rounded-xl font-semibold text-[15px] text-ink"
+            onClick={() => searchJobHandler(cat.name)}
+            className="keycap min-h-12 px-4 rounded-xl font-semibold text-[15px] text-ink inline-flex items-center gap-2.5"
           >
-            {cat}
+            <span
+              aria-hidden="true"
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ background: cat.dot }}
+            />
+            {cat.name}
           </button>
         ))}
       </div>

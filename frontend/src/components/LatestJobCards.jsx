@@ -2,8 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ChairIcon from './ChairIcon';
 
+// Pastel tile + dark letter (contrast-safe), picked from the company name so it stays the same everywhere.
+const TILES = [
+  ['#ffd8c2', '#9a3412'],
+  ['#c9f0dc', '#166534'],
+  ['#cfe3ff', '#1e40af'],
+  ['#fdeaa7', '#854d0e'],
+  ['#fbd3e6', '#9d174d'],
+  ['#e4dcff', '#5b21b6'],
+];
+const tileFor = name =>
+  TILES[[...(name || '')].reduce((n, c) => n + c.charCodeAt(0), 0) % TILES.length];
+
 const LatestJobCards = ({ job }) => {
   const seats = Math.max(0, Number(job?.position) || 0);
+  const [tileBg, tileText] = tileFor(job?.company?.name);
   return (
     <Link
       to={`/description/${job._id}`}
@@ -17,7 +30,10 @@ const LatestJobCards = ({ job }) => {
             className="w-11 h-11 rounded-xl object-cover border border-line"
           />
         ) : (
-          <span className="w-11 h-11 shrink-0 rounded-xl bg-ink text-white grid place-items-center font-extrabold text-lg">
+          <span
+            className="w-11 h-11 shrink-0 rounded-xl grid place-items-center font-extrabold text-lg"
+            style={{ background: tileBg, color: tileText }}
+          >
             {job?.company?.name?.[0]?.toUpperCase() || '?'}
           </span>
         )}
@@ -27,6 +43,9 @@ const LatestJobCards = ({ job }) => {
             {job?.location}
           </p>
         </div>
+        <span className="ml-auto shrink-0 px-2.5 py-1 rounded-lg bg-tint text-brand-ink font-mono text-xs font-medium">
+          ₹{job?.salary} LPA
+        </span>
       </div>
 
       <div>
@@ -45,9 +64,6 @@ const LatestJobCards = ({ job }) => {
         </div>
         <span className="font-mono text-xs text-ink-muted">
           {seats} open {seats === 1 ? 'position' : 'positions'} · {job?.jobType}
-        </span>
-        <span className="ml-auto px-2.5 py-1 rounded-lg bg-tint text-brand-ink font-mono text-xs font-medium">
-          ₹{job?.salary} LPA
         </span>
       </div>
     </Link>

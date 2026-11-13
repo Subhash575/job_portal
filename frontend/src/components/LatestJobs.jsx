@@ -8,7 +8,7 @@ const LatestJobs = () => {
   return (
     <section
       aria-labelledby="latest-jobs"
-      className="bg-[#fafafa] border-y border-line"
+      className="bg-tint border-y border-lilac"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
         <h2

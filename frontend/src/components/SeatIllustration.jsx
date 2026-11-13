@@ -2,10 +2,18 @@
 const INK = '#141414';
 const OPEN = '#6d28d9';
 
-const Person = ({ x }) => (
+// Pastel fills; purple is kept only for the open chairs.
+const PEACH = '#ffd8c2';
+const MINT = '#c9f0dc';
+const SKY = '#cfe3ff';
+const LEMON = '#fdeaa7';
+const PINK = '#fbd3e6';
+const LILAC = '#e4dcff';
+
+const Person = ({ x, shirt }) => (
   <>
     <rect x={x - 14} y="226" width="28" height="32" rx="7" fill="#fff" />
-    <path d={`M${x - 15} 258 V242 Q${x} 228 ${x + 15} 242 V258 Z`} fill="#fff" />
+    <path d={`M${x - 15} 258 V242 Q${x} 228 ${x + 15} 242 V258 Z`} fill={shirt} />
     <circle cx={x} cy="218" r="9" fill="#fff" />
   </>
 );
@@ -17,6 +25,23 @@ const SeatIllustration = () => (
     viewBox="0 0 560 400"
     className="w-full h-auto block"
   >
+    {/* Sun and color fills behind the ink lines */}
+    <circle cx="300" cy="150" r="118" fill="#f1ecff" />
+    <g stroke="none">
+      <rect x="40" y="140" width="70" height="95" fill={PEACH} />
+      <rect x="125" y="110" width="25" height="125" fill={LILAC} />
+      <rect x="175" y="150" width="70" height="85" fill={MINT} />
+      <rect x="165" y="120" width="14" height="115" fill={MINT} />
+      <rect x="241" y="120" width="14" height="115" fill={MINT} />
+      <rect x="282" y="165" width="56" height="70" fill={SKY} />
+      <rect x="270" y="110" width="10" height="125" fill={SKY} />
+      <rect x="340" y="110" width="10" height="125" fill={SKY} />
+      <rect x="362" y="95" width="22" height="140" fill={PINK} />
+      <rect x="395" y="180" width="125" height="55" fill={LEMON} />
+      <path d="M440 180 V160 H475 V180 Z M445 160 Q457.5 126 470 160 Z" fill={LEMON} />
+      <path d="M58 235 V185 A17 17 0 0 1 92 185 V235 Z M195 235 V185 A15 15 0 0 1 225 185 V235 Z M296 235 V198 A14 14 0 0 1 324 198 V235 Z" fill="#fff" />
+    </g>
+
     {/* Skyline: India Gate, a tower, Gateway of India, Charminar, a tower, Vidhana Soudha */}
     <g fill="none" stroke={INK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M40 235 V140 H110 V235" />
@@ -40,15 +65,15 @@ const SeatIllustration = () => (
 
     {/* Back row and sides */}
     <g stroke={INK} strokeWidth="2" strokeLinejoin="round">
-      <Person x={150} />
-      <Person x={230} />
+      <Person x={150} shirt="#ffb48f" />
+      <Person x={230} shirt="#7dd3b0" />
       <rect x="316" y="222" width="28" height="36" rx="7" fill={OPEN} />
-      <Person x={410} />
+      <Person x={410} shirt="#93c5fd" />
       <rect x="46" y="250" width="12" height="38" rx="5" fill="#fff" />
-      <path d="M62 300 V276 Q72 264 84 276 V300 Z" fill="#fff" />
+      <path d="M62 300 V276 Q72 264 84 276 V300 Z" fill="#fcd34d" />
       <circle cx="74" cy="258" r="9" fill="#fff" />
       <rect x="502" y="250" width="12" height="38" rx="5" fill="#fff" />
-      <path d="M476 300 V276 Q488 264 498 276 V300 Z" fill="#fff" />
+      <path d="M476 300 V276 Q488 264 498 276 V300 Z" fill="#f9a8d4" />
       <circle cx="486" cy="258" r="9" fill="#fff" />
     </g>
 
@@ -65,7 +90,7 @@ const SeatIllustration = () => (
 
     {/* Front row: one person seen from behind, one open chair */}
     <g stroke={INK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="200" cy="318" r="10" fill="#fff" />
+      <circle cx="200" cy="318" r="10" fill="#3f3f46" />
       <rect x="182" y="326" width="36" height="40" rx="8" fill="#fff" />
       <path d="M200 366 V378 M184 384 L200 378 L216 384" fill="none" />
       <rect x="342" y="322" width="36" height="44" rx="8" fill={OPEN} />
