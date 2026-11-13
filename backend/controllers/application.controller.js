@@ -49,21 +49,8 @@ export const applyJob = async (req, res) => {
 export const getAppliedJobs = async (req, res) => {
   const userId = req.id;
   const application = await Application.find({ applicant: userId })
-    .sort({ createdAt: -1 }) //It will short the job in ascended order.
-    .populate({
-      path: "job",
-      options: { sort: { createdAt: -1 } },
-      populate: {
-        path: "company", //remember this part value is match with company model
-        options: { sort: { createdAt: -1 } },
-      },
-    }); //Here we use the nested populate.
-  if (!application) {
-    return res.status(404).json({
-      message: "No Applications",
-      success: false,
-    });
-  }
+    .sort({ createdAt: -1 })
+    .populate({ path: "job", populate: { path: "company" } });
   return res.status(200).json({
     application,
     success: true,

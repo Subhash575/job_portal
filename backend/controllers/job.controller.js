@@ -76,12 +76,6 @@ export const getAllJobs = async (req, res) => {
     })
     .sort({ createdAt: -1 })
     .limit(100); // shortcut: the frontend has no paging yet, so older jobs drop off; add paging when there are more than 100 jobs
-  if (!jobs) {
-    return res.status(404).json({
-      message: "Jobs not found.",
-      success: false,
-    });
-  }
   return res.status(200).json({
     jobs,
     success: true,
@@ -110,12 +104,6 @@ export const getAdminJobs = async (req, res) => {
   const jobs = await Job.find({ created_by: adminId })
     .populate({ path: "company" })
     .sort({ createdAt: -1 });
-  if (!jobs) {
-    return res.status(404).json({
-      message: "Jobs not found.",
-      success: false,
-    });
-  }
   return res.status(200).json({
     jobs,
     success: true,

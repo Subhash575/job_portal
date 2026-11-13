@@ -36,12 +36,6 @@ export const getCompany = async (req, res) => {
   const userId = req.id; // logged in user id
   //It will return the array/list of company create by the user.
   const companies = await Company.find({ userId });
-  if (!companies) {
-    return res.status(404).json({
-      message: "Companies not found.",
-      success: false,
-    });
-  }
   return res.status(200).json({
     companies,
     success: true,
