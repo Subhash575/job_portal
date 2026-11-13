@@ -4,9 +4,15 @@ import Footer from './shared/Footer';
 import PageHeader from './shared/PageHeader';
 import FilterCard from './FilterCard';
 import LatestJobCards from './LatestJobCards';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchedQuery } from '@/redux/jobSlice';
+import useGetAllJobs from '@/hooks/useGetAllJobs';
 
 const Jobs = () => {
+  useGetAllJobs(); // load jobs even when someone opens /jobs directly
+  const dispatch = useDispatch();
+  // Clear the chip filter on leave so it isn't saved and sent as a search next time.
+  useEffect(() => () => dispatch(setSearchedQuery('')), [dispatch]);
   const { allJobs, searchedQuery } = useSelector(store => store.job);
   const [filterJobs, setFilterJobs] = useState(allJobs);
 
