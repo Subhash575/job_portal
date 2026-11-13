@@ -30,13 +30,17 @@ const ApplyArt = () => (
 const SeatArt = () => (
   <svg aria-hidden="true" viewBox="0 0 160 120" className="w-full h-auto">
     <g stroke={INK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 74 H120" fill="none" />
-      <path d="M30 74 V110 M110 74 V110" fill="none" />
-      <path d="M58 74 L64 60 H92 L98 74" fill="#fff" />
-      <rect x="44" y="36" width="34" height="44" rx="8" fill="#fff" />
-      <path d="M42 80 V62 Q61 46 80 62 V80 Z" fill="#fbd3e6" />
-      <circle cx="61" cy="38" r="11" fill="#fff" />
-      <path d="M61 80 V96 M47 104 L61 96 L75 104" fill="none" />
+      <rect x="36" y="10" width="50" height="66" rx="11" fill="#fff" />
+      <path d="M46 18 H76" fill="none" />
+      <path d="M43 76 V60 Q61 44 79 60 V76 Z" fill="#fbd3e6" />
+      <circle cx="61" cy="36" r="11" fill="#fff" />
+      <path d="M61 80 V96 M45 104 L61 96 L77 104" fill="none" />
+      <circle cx="45" cy="105" r="2.5" fill="#fff" />
+      <circle cx="77" cy="105" r="2.5" fill="#fff" />
+      <rect x="92" y="52" width="26" height="20" rx="2" fill="#e4dcff" />
+      <path d="M88 74 H122" fill="none" />
+      <rect x="14" y="74" width="116" height="6" rx="2" fill="#fff" />
+      <path d="M24 80 V112 M120 80 V112" fill="none" />
       <circle cx="128" cy="34" r="16" fill="#6d28d9" />
       <path d="M120 34 L126 40 L137 28" stroke="#fff" strokeWidth="3" fill="none" />
     </g>
@@ -64,29 +68,21 @@ const steps = [
   },
 ];
 
-// Hand-drawn dashed arrow between steps (wide screens only).
+// Curved arrow between steps (wide screens only); the head is aligned to the curve's end.
 const Arrow = () => (
   <svg
     aria-hidden="true"
     viewBox="0 0 80 40"
-    className="hidden lg:block absolute -right-[88px] top-20 w-20 text-brand"
+    className="hidden lg:block absolute -right-[88px] top-24 w-20 text-brand"
   >
     <path
-      d="M4 28 Q40 0 70 22"
+      d="M6 30 C24 8 52 6 70 22"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
-      strokeDasharray="5 6"
+      strokeWidth="2.5"
       strokeLinecap="round"
     />
-    <path
-      d="M62 14 L72 23 L60 28"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M74 25.5 L62 22.5 L69.5 13.5 Z" fill="currentColor" />
   </svg>
 );
 

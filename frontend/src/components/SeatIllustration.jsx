@@ -10,9 +10,28 @@ const LEMON = '#fdeaa7';
 const PINK = '#fbd3e6';
 const LILAC = '#e4dcff';
 
+// Back-row chair seen from the front: a tall backrest that shows around the sitter.
+const BackChair = ({ x, fill = '#fff' }) => (
+  <>
+    <rect x={x - 22} y="194" width="44" height="64" rx="10" fill={fill} />
+    <path d={`M${x - 14} 201 H${x + 14}`} fill="none" />
+  </>
+);
+
+// Front-row office chair seen from behind: backrest, seat, post and a caster base.
+const FrontChair = ({ x, fill = '#fff' }) => (
+  <>
+    <rect x={x - 20} y="322" width="40" height="40" rx="9" fill={fill} />
+    <rect x={x - 25} y="360" width="50" height="8" rx="3" fill={fill} />
+    <path d={`M${x} 368 V378 M${x - 18} 386 L${x} 378 L${x + 18} 386`} fill="none" />
+    <circle cx={x - 18} cy="388" r="2.5" fill="#fff" />
+    <circle cx={x + 18} cy="388" r="2.5" fill="#fff" />
+  </>
+);
+
 const Person = ({ x, shirt }) => (
   <>
-    <rect x={x - 14} y="226" width="28" height="32" rx="7" fill="#fff" />
+    <BackChair x={x} />
     <path d={`M${x - 15} 258 V242 Q${x} 228 ${x + 15} 242 V258 Z`} fill={shirt} />
     <circle cx={x} cy="218" r="9" fill="#fff" />
   </>
@@ -67,13 +86,17 @@ const SeatIllustration = () => (
     <g stroke={INK} strokeWidth="2" strokeLinejoin="round">
       <Person x={150} shirt="#ffb48f" />
       <Person x={230} shirt="#7dd3b0" />
-      <rect x="316" y="222" width="28" height="36" rx="7" fill={OPEN} />
+      <BackChair x={330} fill={OPEN} />
       <Person x={410} shirt="#93c5fd" />
-      <rect x="46" y="250" width="12" height="38" rx="5" fill="#fff" />
-      <path d="M62 300 V276 Q72 264 84 276 V300 Z" fill="#fcd34d" />
+      <rect x="44" y="250" width="12" height="48" rx="5" fill="#fff" />
+      <rect x="42" y="296" width="46" height="7" rx="3" fill="#fff" />
+      <path d="M48 303 V324 M82 303 V324" fill="none" />
+      <path d="M62 296 V276 Q72 264 84 276 V296 Z" fill="#fcd34d" />
       <circle cx="74" cy="258" r="9" fill="#fff" />
-      <rect x="502" y="250" width="12" height="38" rx="5" fill="#fff" />
-      <path d="M476 300 V276 Q488 264 498 276 V300 Z" fill="#f9a8d4" />
+      <rect x="504" y="250" width="12" height="48" rx="5" fill="#fff" />
+      <rect x="472" y="296" width="46" height="7" rx="3" fill="#fff" />
+      <path d="M478 303 V324 M512 303 V324" fill="none" />
+      <path d="M476 296 V276 Q488 264 498 276 V296 Z" fill="#f9a8d4" />
       <circle cx="486" cy="258" r="9" fill="#fff" />
     </g>
 
@@ -90,11 +113,10 @@ const SeatIllustration = () => (
 
     {/* Front row: one person seen from behind, one open chair */}
     <g stroke={INK} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="200" cy="318" r="10" fill="#3f3f46" />
-      <rect x="182" y="326" width="36" height="40" rx="8" fill="#fff" />
-      <path d="M200 366 V378 M184 384 L200 378 L216 384" fill="none" />
-      <rect x="342" y="322" width="36" height="44" rx="8" fill={OPEN} />
-      <path d="M360 366 V378 M344 384 L360 378 L376 384" fill="none" />
+      <path d="M176 350 V336 Q200 316 224 336 V350 Z" fill={LILAC} />
+      <circle cx="200" cy="312" r="10" fill="#3f3f46" />
+      <FrontChair x={200} />
+      <FrontChair x={360} fill={OPEN} />
     </g>
   </svg>
 );
