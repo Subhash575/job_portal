@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../shared/Navbar';
+import PageHeader from '../shared/PageHeader';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -17,8 +18,6 @@ import { JOB_API_END_POINT } from '@/utils/constant';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
-
-const companyArray = [];
 
 const PostJob = () => {
   const [input, setInput] = useState({
@@ -71,128 +70,145 @@ const PostJob = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center w-screen my-5">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 pb-16">
+        <PageHeader eyebrow="Post a job" className="mb-8">
+          Add a <b>purple chair</b>
+        </PageHeader>
         <form
           onSubmit={submitHandler}
-          className="p-8 max-w-4xl border border-gray-200 shadow-lg rounded-md"
+          className="p-6 sm:p-8 rounded-3xl border border-line bg-white"
         >
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label>Title</Label>
+          <div className="grid sm:grid-cols-2 gap-5">
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <Label htmlFor="job-title">Title</Label>
               <Input
+                id="job-title"
                 type="text"
                 name="title"
                 value={input.title}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                placeholder="Frontend Developer"
               />
             </div>
-            <div>
-              <Label>Description</Label>
-              <Input
-                type="text"
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <Label htmlFor="job-description">Description</Label>
+              <textarea
+                id="job-description"
                 name="description"
+                rows={4}
                 value={input.description}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                placeholder="What will this person do?"
+                className="w-full rounded-xl border-[1.5px] border-[#e4e4e4] bg-white px-3.5 py-2.5 text-base text-ink placeholder:text-muted-foreground focus-visible:border-ink focus-visible:shadow-[0_3px_0_#141414] focus-visible:outline-none"
               />
             </div>
-            <div>
-              <Label>Requirements</Label>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <Label htmlFor="job-requirements">Requirements</Label>
               <Input
+                id="job-requirements"
                 type="text"
                 name="requirements"
                 value={input.requirements}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                placeholder="React, Node.js, SQL (comma separated)"
               />
             </div>
-            <div>
-              <Label>Salary</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="job-salary">Salary (LPA)</Label>
               <Input
+                id="job-salary"
                 type="text"
                 name="salary"
                 value={input.salary}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                placeholder="12"
               />
             </div>
-            <div>
-              <Label>Location</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="job-location">Location</Label>
               <Input
+                id="job-location"
                 type="text"
                 name="location"
                 value={input.location}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                placeholder="Bengaluru"
               />
             </div>
-            <div>
-              <Label>Job Type</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="job-type">Job type</Label>
               <Input
+                id="job-type"
                 type="text"
                 name="jobType"
                 value={input.jobType}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                placeholder="Full-time"
               />
             </div>
-            <div>
-              <Label>Experience Level</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="job-experience">Experience (years)</Label>
               <Input
+                id="job-experience"
                 type="text"
                 name="experience"
                 value={input.experience}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                placeholder="2"
               />
             </div>
-            <div>
-              <Label>No of Postion</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="job-position">Open positions</Label>
               <Input
+                id="job-position"
                 type="number"
                 name="position"
                 value={input.position}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                min="1"
               />
             </div>
-            {companies.length > 0 && (
-              <Select onValueChange={selectChangeHandler}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select a Company" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {companies.map(company => {
-                      return (
-                        <SelectItem value={company?.name?.toLowerCase()}>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="job-company">Company</Label>
+              {companies.length > 0 ? (
+                <Select onValueChange={selectChangeHandler}>
+                  <SelectTrigger
+                    id="job-company"
+                    className="w-full h-11 rounded-xl border-[1.5px] border-[#e4e4e4]"
+                  >
+                    <SelectValue placeholder="Select a company" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {companies.map(company => (
+                        <SelectItem
+                          key={company._id}
+                          value={company?.name?.toLowerCase()}
+                        >
                           {company.name}
                         </SelectItem>
-                      );
-                    })}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            )}
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-sm text-ink-muted">
+                  Register a company first, then post jobs for it.
+                </p>
+              )}
+            </div>
           </div>
           {loading ? (
-            <Button className="w-full my-4">
-              {' '}
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait{' '}
+            <Button size="lg" className="w-full mt-8" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
             </Button>
           ) : (
-            <Button type="submit" className="w-full my-4">
-              Post New Job
+            <Button type="submit" size="lg" className="w-full mt-8">
+              Post job
             </Button>
           )}
-          {companies.length === 0 && (
-            <p className="text-xs text-red-600 font-bold text-center my-3">
-              *Please register a company first, before posting a jobs
-            </p>
-          )}
         </form>
-      </div>
+      </main>
     </div>
   );
 };

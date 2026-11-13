@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../shared/Navbar';
+import PageHeader from '../shared/PageHeader';
 import { Button } from '../ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Label } from '../ui/label';
@@ -70,88 +71,100 @@ const CompanySetup = () => {
 
   useEffect(() => {
     setInput({
-      name: singleCompany.name || '',
-      description: singleCompany.description || '',
-      website: singleCompany.website || '',
-      location: singleCompany.location || '',
-      file: singleCompany.file || null,
+      name: singleCompany?.name || '',
+      description: singleCompany?.description || '',
+      website: singleCompany?.website || '',
+      location: singleCompany?.location || '',
+      file: singleCompany?.file || null,
     });
   }, [singleCompany]);
 
   return (
     <div>
       <Navbar />
-      <div className="max-w-xl mx-auto my-10">
-        <form onSubmit={submitHandler}>
-          <div className="flex items-center gap-5 p-8">
-            <Button
-              onClick={() => navigate('/admin/companies')}
-              variant="outline"
-              className="flex items-center gap-2 text-gray-500 font-semibold"
-            >
-              <ArrowLeft />
-              <span>Back</span>
-            </Button>
-            <h1 className="font-bold text-xl">Company Setup</h1>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Company Name</Label>
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-8 pb-16">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/admin/companies')}
+          className="mb-4 -ml-2 font-mono text-xs text-ink-muted"
+        >
+          <ArrowLeft /> Companies
+        </Button>
+        <PageHeader eyebrow="Company setup" className="mb-8">
+          Tell seekers about <b>your team</b>
+        </PageHeader>
+        <form
+          onSubmit={submitHandler}
+          className="p-6 sm:p-8 rounded-3xl border border-line bg-white"
+        >
+          <div className="grid sm:grid-cols-2 gap-5">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="company-name">Company name</Label>
               <Input
+                id="company-name"
                 type="text"
                 name="name"
                 value={input.name}
                 onChange={changeEventHandler}
               />
             </div>
-            <div>
-              <Label>Description</Label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="company-location">Location</Label>
               <Input
-                type="text"
-                name="description"
-                value={input.description}
-                onChange={changeEventHandler}
-              />
-            </div>
-            <div>
-              <Label>Website</Label>
-              <Input
-                type="text"
-                name="website"
-                value={input.website}
-                onChange={changeEventHandler}
-              />
-            </div>
-            <div>
-              <Label>Location</Label>
-              <Input
+                id="company-location"
                 type="text"
                 name="location"
                 value={input.location}
                 onChange={changeEventHandler}
+                placeholder="Bengaluru"
               />
             </div>
-            <div>
-              <Label>Logo</Label>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <Label htmlFor="company-website">Website</Label>
               <Input
+                id="company-website"
+                type="url"
+                name="website"
+                value={input.website}
+                onChange={changeEventHandler}
+                placeholder="https://"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <Label htmlFor="company-description">Description</Label>
+              <Input
+                id="company-description"
+                type="text"
+                name="description"
+                value={input.description}
+                onChange={changeEventHandler}
+                placeholder="What does your team build?"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <Label htmlFor="company-logo">Logo</Label>
+              <Input
+                id="company-logo"
                 type="file"
                 accept="image/*"
                 onChange={changeFileHandler}
+                className="cursor-pointer pt-2.5"
               />
             </div>
           </div>
           {loading ? (
-            <Button className="w-full my-4">
-              {' '}
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait{' '}
+            <Button size="lg" className="w-full mt-8" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
             </Button>
           ) : (
-            <Button type="submit" className="w-full my-4">
-              Update
+            <Button type="submit" size="lg" className="w-full mt-8">
+              Save company
             </Button>
           )}
         </form>
-      </div>
+      </main>
     </div>
   );
 };

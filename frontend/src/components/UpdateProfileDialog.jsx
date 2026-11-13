@@ -68,117 +68,106 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(
+        error.response?.data?.message || 'Could not update. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
     setOpen(false);
-    console.log(input);
   };
 
   return (
-    <div>
-      <Dialog open={open}>
-        <DialogContent
-          className="sm:max-w-[425px]"
-          onInteractOutside={() => setOpen(false)}
-        >
-          <DialogHeader>
-            <DialogTitle>Update Profile</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={submitHandler}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={input.fullname}
-                  onChange={changeEventHandler}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={input.email}
-                  onChange={changeEventHandler}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="number" className="text-right">
-                  Number
-                </Label>
-                <Input
-                  id="number"
-                  name="number"
-                  value={input.phoneNumber}
-                  onChange={changeEventHandler}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="bio" className="text-right">
-                  Bio
-                </Label>
-                <Input
-                  id="bio"
-                  name="bio"
-                  value={input.bio}
-                  onChange={changeEventHandler}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="skills" className="text-right">
-                  Skills
-                </Label>
-                <Input
-                  id="skills"
-                  name="skills"
-                  value={input.skills}
-                  onChange={changeEventHandler}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="file" className="text-right">
-                  Resume
-                </Label>
-                <Input
-                  id="file"
-                  name="file"
-                  type="file"
-                  accept="application/pdf"
-                  onChange={fileChangeHandler}
-                  className="col-span-3"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              {loading ? (
-                <Button className="w-full my-4">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
-                </Button>
-              ) : (
-                <Button type="submit" className="w-full my-4">
-                  Update
-                </Button>
-              )}
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </div>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-[460px] max-h-[90vh] overflow-y-auto rounded-3xl border-line">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-light tracking-[-0.03em] text-ink">
+            Edit your <b className="font-bold">profile</b>
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={submitHandler} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              name="fullname"
+              type="text"
+              value={input.fullname}
+              onChange={changeEventHandler}
+              autoComplete="name"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={input.email}
+              onChange={changeEventHandler}
+              autoComplete="email"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="number">Phone number</Label>
+            <Input
+              id="number"
+              name="phoneNumber"
+              type="tel"
+              value={input.phoneNumber}
+              onChange={changeEventHandler}
+              autoComplete="tel"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="bio">Bio</Label>
+            <Input
+              id="bio"
+              name="bio"
+              type="text"
+              value={input.bio}
+              onChange={changeEventHandler}
+              placeholder="One line about you"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="skills">Skills</Label>
+            <Input
+              id="skills"
+              name="skills"
+              type="text"
+              value={input.skills}
+              onChange={changeEventHandler}
+              placeholder="React, Node.js, SQL"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="file">
+              Resume <span className="font-normal text-ink-muted">(PDF)</span>
+            </Label>
+            <Input
+              id="file"
+              name="file"
+              type="file"
+              accept="application/pdf"
+              onChange={fileChangeHandler}
+              className="cursor-pointer pt-2.5"
+            />
+          </div>
+          <DialogFooter>
+            {loading ? (
+              <Button size="lg" className="w-full" disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
+              </Button>
+            ) : (
+              <Button type="submit" size="lg" className="w-full">
+                Save changes
+              </Button>
+            )}
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

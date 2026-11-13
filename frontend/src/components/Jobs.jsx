@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from './shared/Navbar';
+import Footer from './shared/Footer';
+import PageHeader from './shared/PageHeader';
 import FilterCard from './FilterCard';
-import Job from './Job';
-import { useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
+import LatestJobCards from './LatestJobCards';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchedQuery } from '@/redux/jobSlice';
+import useGetAllJobs from '@/hooks/useGetAllJobs';
 
 const Jobs = () => {
+  useGetAllJobs(); // load jobs even when someone opens /jobs directly
+  const dispatch = useDispatch();
+  // Clear the chip filter on leave so it isn't saved and sent as a search next time.
+  useEffect(() => () => dispatch(setSearchedQuery('')), [dispatch]);
   const { allJobs, searchedQuery } = useSelector(store => store.job);
   const [filterJobs, setFilterJobs] = useState(allJobs);
 
@@ -27,32 +34,34 @@ const Jobs = () => {
   return (
     <div>
       <Navbar />
-      <div className="max-w-7xl mx-auto mt-5">
-        <div className="flex gap-5">
-          <div className="w-20%">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-16">
+        <PageHeader eyebrow="All jobs" className="mb-8">
+          Find your <b>seat</b>
+        </PageHeader>
+        <div className="flex flex-col lg:flex-row gap-6 lg:items-start">
+          <aside className="lg:w-72 lg:shrink-0">
             <FilterCard />
-          </div>
-          {filterJobs.length <= 0 ? (
-            <span>Job not found</span>
-          ) : (
-            <div className="flex-1 h-[88vh] overflow-y-auto pb-5">
-              <div className="grid grid-cols-3 gap-4">
+          </aside>
+          <section aria-label="Job results" className="flex-1 min-w-0">
+            <p className="mb-4 font-mono text-xs text-ink-muted">
+              {filterJobs.length} {filterJobs.length === 1 ? 'job' : 'jobs'}
+              {searchedQuery && ` for “${searchedQuery.trim()}”`}
+            </p>
+            {filterJobs.length <= 0 ? (
+              <p className="p-10 rounded-2xl border border-dashed border-[#e4e4e4] text-center text-ink-muted">
+                No seats match this filter yet. Try another one.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {filterJobs.map(job => (
-                  <motion.div
-                    initial={{ opacity: 0, x: 100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -100 }}
-                    transition={{ duration: 0.3 }}
-                    key={job?._id}
-                  >
-                    <Job job={job} />
-                  </motion.div>
+                  <LatestJobCards key={job?._id} job={job} />
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </section>
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };

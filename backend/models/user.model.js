@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
       //bcs not create user with same email
     },
     phoneNumber: {
-      type: Number,
+      type: String, // text, so a leading zero or "+" is kept
       required: true,
     },
     password: {

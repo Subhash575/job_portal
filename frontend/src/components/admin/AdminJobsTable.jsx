@@ -2,15 +2,13 @@ import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '../ui/table';
-import { Avatar, AvatarImage } from '../ui/avatar';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Edit2, Eye, MoreHorizontal } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Users } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,63 +19,62 @@ const AdminJobsTable = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('called');
     const filteredJobs = allAdminJobs.filter(job => {
       if (!searchJobByText) {
         return true;
       }
       return (
         job?.title?.toLowerCase().includes(searchJobByText.toLowerCase()) ||
-        job?.company?.name.toLowerCase().includes(searchJobByText.toLowerCase())
+        job?.company?.name
+          ?.toLowerCase()
+          .includes(searchJobByText.toLowerCase())
       );
     });
     setFilterJobs(filteredJobs);
   }, [allAdminJobs, searchJobByText]);
   return (
-    <div>
+    <div className="rounded-2xl border border-line bg-white px-2">
       <Table>
-        <TableCaption>A list of your recent posted jobs</TableCaption>
         <TableHeader>
-          <TableRow>
-            <TableHead>Company Name</TableHead>
+          <TableRow className="hover:bg-transparent">
             <TableHead>Role</TableHead>
-            <TableHead>Date</TableHead>
+            <TableHead>Company</TableHead>
+            <TableHead>Posted</TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filterJobs?.map(job => (
-            <tr>
-              <TableCell>{job?.company?.name}</TableCell>
-              <TableCell>{job?.title}</TableCell>
-              <TableCell>{job?.createdAt.split('T')[0]}</TableCell>
-              <TableCell className="text-right cursor-pointer">
-                <Popover>
-                  <PopoverTrigger>
-                    <MoreHorizontal />
-                  </PopoverTrigger>
-                  <PopoverContent className="w-32">
-                    <div
-                      onClick={() => navigate(`/admin/companies/${job._id}`)}
-                      className="flex items-center gap-2 w-fit cursor-pointer"
-                    >
-                      <Edit2 className="w-4" />
-                      <span>Edit</span>
-                    </div>
-                    <div
-                      onClick={() =>
-                        navigate(`/admin/jobs/${job._id}/applicants`)
-                      }
-                      className="flex items-center w-fit gap-2 cursor-pointer mt-2"
-                    >
-                      <Eye className="w-4" />
-                      <span>Applicants</span>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+          {!filterJobs?.length ? (
+            <TableRow className="hover:bg-transparent">
+              <TableCell
+                colSpan={4}
+                className="py-10 text-center text-ink-muted"
+              >
+                No jobs posted yet.
               </TableCell>
-            </tr>
-          ))}
+            </TableRow>
+          ) : (
+            filterJobs.map(job => (
+              <TableRow key={job._id}>
+                <TableCell className="font-bold">{job?.title}</TableCell>
+                <TableCell>{job?.company?.name}</TableCell>
+                <TableCell className="font-mono text-xs text-ink-muted">
+                  {job?.createdAt?.split('T')[0]}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      navigate(`/admin/jobs/${job._id}/applicants`)
+                    }
+                  >
+                    <Users /> Applicants
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

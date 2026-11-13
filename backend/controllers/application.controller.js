@@ -2,135 +2,123 @@ import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
 
 export const applyJob = async (req, res) => {
+  const userId = req.id;
+  const jobId = req.params.id;
+  if (!jobId) {
+    return res.status(400).json({
+      message: "Job id is required.",
+      success: false,
+    });
+  }
+  // check if the jobs exists
+  if (!(await Job.exists({ _id: jobId }))) {
+    return res.status(404).json({
+      message: "Job not found",
+      success: false,
+    });
+  }
+  // create a new application. The unique index on (job, applicant) refuses a second one,
+  // even when two requests arrive at the same moment.
+  let newApplication;
   try {
-    const userId = req.id;
-    const jobId = req.params.id;
-    if (!jobId) {
-      return res.status(400).json({
-        message: "Job id is required.",
-        success: false,
-      });
-    }
-    // check if the user has already applied for the job
-    const existingApplication = await Application.findOne({
+    newApplication = await Application.create({
       job: jobId,
       applicant: userId,
     });
-
-    if (existingApplication) {
+  } catch (error) {
+    if (error.code === 11000) {
       return res.status(400).json({
         message: "You have already applied for this jobs",
         success: false,
       });
     }
-
-    // check if the jobs exists
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({
-        message: "Job not found",
-        success: false,
-      });
-    }
-    // create a new application
-    const newApplication = await Application.create({
-      job: jobId,
-      applicant: userId,
-    });
-
-    job.applications.push(newApplication._id);
-    await job.save();
-    return res.status(201).json({
-      message: "Job applied successfully.",
-      success: true,
-    });
-  } catch (error) {
-    console.log(error);
+    throw error;
   }
+
+  // $push changes only this list, so two applicants can't overwrite each other's entry
+  await Job.updateOne(
+    { _id: jobId },
+    { $push: { applications: newApplication._id } },
+  );
+  return res.status(201).json({
+    message: "Job applied successfully.",
+    success: true,
+  });
 };
 //login user see all the apply job show.
 export const getAppliedJobs = async (req, res) => {
-  try {
-    const userId = req.id;
-    const application = await Application.find({ applicant: userId })
-      .sort({ createdAt: -1 }) //It will short the job in ascended order.
-      .populate({
-        path: "job",
-        options: { sort: { createdAt: -1 } },
-        populate: {
-          path: "company", //remember this part value is match with company model
-          options: { sort: { createdAt: -1 } },
-        },
-      }); //Here we use the nested populate.
-    if (!application) {
-      return res.status(404).json({
-        message: "No Applications",
-        success: false,
-      });
-    }
-    return res.status(200).json({
-      application,
-      success: true,
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  const userId = req.id;
+  const application = await Application.find({ applicant: userId })
+    .sort({ createdAt: -1 })
+    .populate({ path: "job", populate: { path: "company" } });
+  return res.status(200).json({
+    application,
+    success: true,
+  });
 };
 // admin dekhega kitna user ne apply kiya hai
 export const getApplicants = async (req, res) => {
-  try {
-    const jobId = req.params.id;
-    const job = await Job.findById(jobId).populate({
-      path: "applications",
-      options: { sort: { createdAt: -1 } },
-      populate: {
-        path: "applicant", //Here we done the nested populate.
-      },
+  const jobId = req.params.id;
+  // Only the recruiter who posted the job may see its applicants.
+  const job = await Job.findOne({ _id: jobId, created_by: req.id }).populate({
+    path: "applications",
+    options: { sort: { createdAt: -1 } },
+    populate: {
+      path: "applicant", //Here we done the nested populate.
+      select: "-password", // never send password hashes
+    },
+  });
+  if (!job) {
+    return res.status(404).json({
+      message: "Job not found.",
+      success: false,
     });
-    if (!job) {
-      return res.status(404).json({
-        message: "Job not found.",
-        success: false,
-      });
-    }
-    return res.status(200).json({
-      job,
-      succees: true,
-    });
-  } catch (error) {
-    console.log(error);
   }
+  return res.status(200).json({
+    job,
+    success: true,
+  });
 };
 //Person is selected or Rejected or pending therefore updateStatus is use.
 export const updateStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-    const applicationId = req.params.id;
-    if (!status) {
-      return res.status(400).json({
-        message: "status is required",
-        success: false,
-      });
-    }
-
-    // find the application by applicantion id
-    const application = await Application.findOne({ _id: applicationId });
-    if (!application) {
-      return res.status(404).json({
-        message: "Application not found.",
-        success: false,
-      });
-    }
-
-    // update the status
-    application.status = status.toLowerCase();
-    await application.save();
-
-    return res.status(200).json({
-      message: "Status updated successfully.",
-      success: true,
+  const { status } = req.body;
+  const applicationId = req.params.id;
+  if (!status) {
+    return res.status(400).json({
+      message: "status is required",
+      success: false,
     });
-  } catch (error) {
-    console.log(error);
   }
+  if (!["pending", "accepted", "rejected"].includes(String(status).toLowerCase())) {
+    return res.status(400).json({
+      message: "status must be pending, accepted or rejected",
+      success: false,
+    });
+  }
+
+  // find the application by applicantion id
+  const application = await Application.findOne({ _id: applicationId });
+  if (!application) {
+    return res.status(404).json({
+      message: "Application not found.",
+      success: false,
+    });
+  }
+
+  // Only the recruiter who posted the job may change an application's status.
+  if (!(await Job.exists({ _id: application.job, created_by: req.id }))) {
+    return res.status(404).json({
+      message: "Application not found.",
+      success: false,
+    });
+  }
+
+  // update the status
+  application.status = String(status).toLowerCase();
+  await application.save();
+
+  return res.status(200).json({
+    message: "Status updated successfully.",
+    success: true,
+  });
 };

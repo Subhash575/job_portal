@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '../ui/table';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { MoreHorizontal } from 'lucide-react';
+import { Button } from '../ui/button';
+import { FileText } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { APPLICATION_API_END_POINT } from '@/utils/constant';
@@ -17,84 +16,123 @@ import axios from 'axios';
 
 const shortlistingStatus = ['Accepted', 'Rejected'];
 
+// Same pill colors as the job seeker's Profile table.
+const STATUS = {
+  pending: 'bg-[#fdeaa7] text-[#854d0e]',
+  accepted: 'bg-[#c9f0dc] text-[#166534]',
+  rejected: 'bg-[#fbd3e6] text-[#9d174d]',
+};
+
 const ApplicantsTable = () => {
   const { applicants } = useSelector(store => store.application);
+  // Decisions made on this page, so the status pill updates without a refetch.
+  const [statuses, setStatuses] = useState({});
 
   const statusHandler = async (status, id) => {
-    console.log('called');
     try {
       axios.defaults.withCredentials = true;
       const res = await axios.post(
         `${APPLICATION_API_END_POINT}/status/${id}/update`,
         { status }
       );
-      console.log(res);
       if (res.data.success) {
+        setStatuses(prev => ({ ...prev, [id]: status.toLowerCase() }));
         toast.success(res.data.message);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(
+        error.response?.data?.message || 'Could not update. Please try again.'
+      );
     }
   };
 
   return (
-    <div>
+    <div className="rounded-2xl border border-line bg-white px-2">
       <Table>
-        <TableCaption>A list of your recent applied user</TableCaption>
         <TableHeader>
-          <TableRow>
-            <TableHead>FullName</TableHead>
-            <TableHead>Email</TableHead>
+          <TableRow className="hover:bg-transparent">
+            <TableHead>Name</TableHead>
             <TableHead>Contact</TableHead>
             <TableHead>Resume</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead>Applied</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Decision</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {applicants &&
-            applicants?.applications?.map(item => (
-              <tr key={item._id}>
-                <TableCell>{item?.applicant?.fullname}</TableCell>
-                <TableCell>{item?.applicant?.email}</TableCell>
-                <TableCell>{item?.applicant?.phoneNumber}</TableCell>
-                <TableCell>
-                  {item.applicant?.profile?.resume ? (
-                    <a
-                      className="text-blue-600 cursor-pointer"
-                      href={item?.applicant?.profile?.resume}
-                      target="_blank"
-                      rel="noopener noreferrer"
+          {!applicants?.applications?.length ? (
+            <TableRow className="hover:bg-transparent">
+              <TableCell
+                colSpan={6}
+                className="py-10 text-center text-ink-muted"
+              >
+                No one has applied yet.
+              </TableCell>
+            </TableRow>
+          ) : (
+            applicants.applications.map(item => {
+              const status = statuses[item._id] || item.status || 'pending';
+              return (
+                <TableRow key={item._id}>
+                  <TableCell className="font-bold">
+                    {item?.applicant?.fullname}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col font-mono text-xs">
+                      <span>{item?.applicant?.email}</span>
+                      <span className="text-ink-muted">
+                        {item?.applicant?.phoneNumber}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {item.applicant?.profile?.resume ? (
+                      <a
+                        className="inline-flex items-center gap-1.5 font-bold text-brand hover:underline"
+                        href={item.applicant.profile.resume}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FileText aria-hidden="true" className="w-4 h-4" />
+                        {item.applicant.profile.resumeOriginalName || 'Resume'}
+                      </a>
+                    ) : (
+                      <span className="text-ink-muted">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs text-ink-muted">
+                    {
+                      (item?.createdAt || item?.applicant?.createdAt)?.split(
+                        'T'
+                      )[0]
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-block px-2.5 py-1 rounded-lg font-mono text-xs font-medium capitalize ${STATUS[status] || STATUS.pending}`}
                     >
-                      {item?.applicant?.profile?.resumeOriginalName}
-                    </a>
-                  ) : (
-                    <span>NA</span>
-                  )}
-                </TableCell>
-                <TableCell>{item?.applicant.createdAt.split('T')[0]}</TableCell>
-                <TableCell className="float-right cursor-pointer">
-                  <Popover>
-                    <PopoverTrigger>
-                      <MoreHorizontal />
-                    </PopoverTrigger>
-                    <PopoverContent className="w-32">
-                      {shortlistingStatus.map((status, index) => {
-                        return (
-                          <div
-                            onClick={() => statusHandler(status, item?._id)}
-                            key={index}
-                            className="flex w-fit items-center my-2 cursor-pointer"
-                          >
-                            <span>{status}</span>
-                          </div>
-                        );
-                      })}
-                    </PopoverContent>
-                  </Popover>
-                </TableCell>
-              </tr>
-            ))}
+                      {status}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="inline-flex gap-2">
+                      {shortlistingStatus.map(s => (
+                        <Button
+                          key={s}
+                          size="sm"
+                          variant={s === 'Accepted' ? 'default' : 'outline'}
+                          disabled={status === s.toLowerCase()}
+                          onClick={() => statusHandler(s, item?._id)}
+                        >
+                          {s === 'Accepted' ? 'Accept' : 'Reject'}
+                        </Button>
+                      ))}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
     </div>

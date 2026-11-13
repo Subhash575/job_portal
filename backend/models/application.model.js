@@ -20,4 +20,6 @@ const applicationSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+// one application per person per job
+applicationSchema.index({ job: 1, applicant: 1 }, { unique: true });
 export const Application = mongoose.model("Application", applicationSchema);

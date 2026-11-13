@@ -99,6 +99,7 @@ export const login = async (req, res) => {
 
     const tokenData = {
       userId: user._id,
+      role: user.role,
     };
     //check
     //understanding about jwt token
@@ -155,14 +156,7 @@ export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
 
-    const file = req.file;
-    // cloudinary ayega idhar
-    const fileUri = getDataUri(file);
-    // const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-    const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
-      resource_type: "auto",
-    });
-    
+    const file = req.file; // the resume is optional
     let skillsArray;
     if (skills) {
       skillsArray = skills.split(",");
@@ -176,6 +170,13 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
+    // the email must not belong to another account
+    if (email && email !== user.email && (await User.exists({ email }))) {
+      return res.status(400).json({
+        message: "This email is already used by another account.",
+        success: false,
+      });
+    }
     // updating data
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
@@ -183,8 +184,11 @@ export const updateProfile = async (req, res) => {
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skillsArray;
 
-    // resume comes later here...
-    if (cloudResponse) {
+    if (file) {
+      const fileUri = getDataUri(file);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+        resource_type: "auto",
+      });
       user.profile.resume = cloudResponse.secure_url; // save the cloudinary url
       user.profile.resumeOriginalName = file.originalname; // Save the original file name
     }

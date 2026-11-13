@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Label } from './ui/label';
 import { useDispatch } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
 
@@ -52,32 +50,48 @@ const fitlerData = [
 const FilterCard = () => {
   const [selectedValue, setSelectedValue] = useState('');
   const dispatch = useDispatch();
-  const changeHandler = value => {
-    setSelectedValue(value);
-  };
   useEffect(() => {
     dispatch(setSearchedQuery(selectedValue));
   }, [dispatch, selectedValue]);
   return (
-    <div className="w-full bg-white p-3 rounded-md">
-      <h1 className="font-bold text-lg">Filter Jobs</h1>
-      <hr className="mt-3" />
-      <RadioGroup value={selectedValue} onValueChange={changeHandler}>
-        {fitlerData.map((data, index) => (
-          <div>
-            <h1 className="font-bold text-lg">{data.fitlerType}</h1>
-            {data.array.map((item, idx) => {
-              const itemId = `id${index}-${idx}`;
-              return (
-                <div className="flex items-center space-x-2 my-2">
-                  <RadioGroupItem value={item} id={itemId} />
-                  <Label htmlFor={itemId}>{item}</Label>
-                </div>
-              );
-            })}
+    <div className="w-full flex flex-col gap-5 p-5 rounded-2xl border border-line bg-white">
+      <div className="flex items-center justify-between">
+        <h2 className="font-extrabold text-lg text-ink">Filter jobs</h2>
+        {selectedValue && (
+          <button
+            type="button"
+            onClick={() => setSelectedValue('')}
+            className="font-mono text-xs text-brand hover:underline"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+      {fitlerData.map(data => (
+        <fieldset key={data.fitlerType} className="min-w-0">
+          <legend className="mb-2.5 font-mono text-xs tracking-[.1em] uppercase text-ink-muted">
+            {data.fitlerType}
+          </legend>
+          {/* One scrolling row per group on phones, wrapped chips on wide screens */}
+          <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-wrap lg:overflow-visible">
+            {data.array.map(item => (
+              <label key={item} className="relative shrink-0 cursor-pointer">
+                <input
+                  type="radio"
+                  name="job-filter"
+                  value={item}
+                  checked={selectedValue === item}
+                  onChange={() => setSelectedValue(item)}
+                  className="peer sr-only"
+                />
+                <span className="block px-3 py-1.5 rounded-full border border-line text-sm text-ink whitespace-nowrap transition hover:border-brand-soft peer-checked:bg-brand peer-checked:border-brand peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-brand peer-focus-visible:outline-offset-2">
+                  {item.trim()}
+                </span>
+              </label>
+            ))}
           </div>
-        ))}
-      </RadioGroup>
+        </fieldset>
+      ))}
     </div>
   );
 };
