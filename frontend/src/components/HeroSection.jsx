@@ -1,51 +1,78 @@
 import React, { useState } from 'react';
-import { Button } from './ui/button';
 import { Search } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
 import { useNavigate } from 'react-router-dom';
+import SeatIllustration from './SeatIllustration';
+import ChairIcon from './ChairIcon';
 
 const HeroSection = () => {
   const [query, setQuery] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const searchJobHandler = () => {
+  const searchJobHandler = e => {
+    e.preventDefault();
     dispatch(setSearchedQuery(query));
     navigate('/browse');
   };
 
   return (
-    <div className="text-center">
-      <div className="flex flex-col gap-5 my-10">
-        <span className=" mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#F83002] font-medium">
-          No. 1 Job Hunt Website
-        </span>
-        <h1 className="text-5xl font-bold">
-          Search, Apply & <br /> Get Your{' '}
-          <span className="text-[#6A38C2]">Dream Jobs</span>
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-10 flex flex-wrap items-center gap-10">
+      <div className="flex-[1_1_420px] min-w-0 flex flex-col gap-5">
+        <h1 className="text-5xl sm:text-6xl leading-[1.05] font-light tracking-[-0.035em] text-ink">
+          There’s a <span className="font-bold text-brand">seat</span>
+          <br />
+          for you.
         </h1>
-        <p>
-          "Welcome to our job portal – your gateway to exciting career
-          opportunities. Connect with top companies, explore jobs, and apply
-          with ease!"
+        <p className="max-w-md text-lg leading-relaxed text-ink-muted">
+          Teams across India are hiring. Every purple chair is an open
+          position. Find yours and apply in one click.
         </p>
-        <div className="flex w-[40%] shadow-lg border border-gray-200 pl-3 rounded-full items-center gap-4 mx-auto">
-          <input
-            type="text"
-            placeholder="Find your dream jobs"
-            onChange={e => setQuery(e.target.value)}
-            className="outline-none border-none w-full"
-          />
-          <Button
-            onClick={searchJobHandler}
-            className="rounded-r-full bg-[#6A38C2]"
+
+        <form
+          role="search"
+          onSubmit={searchJobHandler}
+          className="flex flex-wrap gap-2.5 max-w-xl"
+        >
+          <label htmlFor="hero-search" className="sr-only">
+            Search jobs
+          </label>
+          <div className="flex-[1_1_260px] flex items-center gap-2.5 pl-4 pr-3 min-h-14 border-[1.5px] border-ink rounded-xl bg-white shadow-[0_4px_0_#141414]">
+            <Search aria-hidden="true" className="w-5 h-5 text-ink-muted" />
+            <input
+              id="hero-search"
+              type="text"
+              value={query}
+              placeholder="Job title, skill or company"
+              onChange={e => setQuery(e.target.value)}
+              className="flex-1 min-w-0 bg-transparent outline-none text-base text-ink"
+            />
+          </div>
+          <button
+            type="submit"
+            className="keycap-brand min-h-14 px-6 rounded-xl text-base font-bold"
           >
-            <Search className="h-5 w-5" />
-          </Button>
-        </div>
+            Find my seat
+          </button>
+        </form>
+
+        <p className="flex items-center gap-2 font-mono text-xs text-ink-muted">
+          <ChairIcon open className="w-[18px] h-[18px]" />
+          purple chair = open position
+        </p>
       </div>
-    </div>
+
+      <div className="flex-[1_1_480px] min-w-0 relative">
+        <SeatIllustration />
+        <p
+          aria-hidden="true"
+          className="hidden sm:block absolute right-[2%] bottom-[2%] font-hand text-2xl text-brand -rotate-[4deg]"
+        >
+          ← this one’s yours?
+        </p>
+      </div>
+    </section>
   );
 };
 

@@ -6,20 +6,28 @@ const LatestJobs = () => {
   const { allJobs } = useSelector(store => store.job);
 
   return (
-    <div className="max-w-7xl mx-auto my-20">
-      <h1 className="text-4xl font-bold">
-        <span className="text-[#6A38C2]">Latest & Top </span> Job Openings
-      </h1>
-      <div className="grid grid-cols-3 gap-4 my-5">
+    <section
+      aria-labelledby="latest-jobs"
+      className="bg-[#fafafa] border-y border-line"
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
+        <h2
+          id="latest-jobs"
+          className="mb-6 text-3xl sm:text-4xl font-light tracking-[-0.03em] text-ink"
+        >
+          Seats open <b className="font-bold">this week</b>
+        </h2>
         {allJobs.length <= 0 ? (
-          <span>No Job Available</span>
+          <p className="text-ink-muted">No jobs available yet.</p>
         ) : (
-          allJobs
-            ?.slice(0, 6)
-            .map(job => <LatestJobCards key={job._id} job={job} />)
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {allJobs.slice(0, 6).map(job => (
+              <LatestJobCards key={job._id} job={job} />
+            ))}
+          </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 
